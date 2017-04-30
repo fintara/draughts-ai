@@ -1,15 +1,13 @@
 package com.tsovedenski.ai.draughts.game
 
-import com.tsovedenski.ai.draughts.game.elements.Cell
-import com.tsovedenski.ai.draughts.game.elements.Color
-import com.tsovedenski.ai.draughts.game.elements.Move
-import com.tsovedenski.ai.draughts.game.elements.Piece
+import com.tsovedenski.ai.draughts.game.elements.*
 import com.tsovedenski.ai.draughts.players.Player
 import java.util.*
 
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
+
 data class State (private val board: Array<Array<Cell>>, val size: Int, val pieces: Int) {
     constructor(size: Int, pieces: Int): this(generate(size, pieces), size, pieces)
 
@@ -19,16 +17,46 @@ data class State (private val board: Array<Array<Cell>>, val size: Int, val piec
         }
     }
 
-    fun valid(move: Move, player: Player): Boolean {
+    fun valid(move: Move): Boolean {
+        if (!board[move.from].allowed || !board[move.to].allowed) {
+            return false
+        }
+
+        if (board[move.from].piece == null) {
+            return false
+        }
+
+        if (board[move.to].piece != null) {
+            return false
+        }
+
+        if (board[move.from].piece!!.color != move.player.color) {
+            return false
+        }
+
         return true
     }
 
     fun apply(move: Move): State {
-        return State(8, 12)
+        if (!valid(move)) {
+            throw RuntimeException("Illegal move $move")
+        }
+
+        val cloned = copy(board = board.map { it.clone() }.toTypedArray())
+
+        val piece = cloned.board[move.from].piece
+        cloned.board[move.from] = cloned.board[move.from].copy(piece = null)
+
+        cloned.board[move.to] = cloned.board[move.to].copy(piece = piece)
+
+        return cloned
     }
 
     fun winner(player: Player): Player? {
-        return player
+        if (cnt++ == 3) {
+            return player
+        }
+        return null
     }
 
     override fun toString(): String {
@@ -79,6 +107,13 @@ data class State (private val board: Array<Array<Cell>>, val size: Int, val piec
     }
 
     companion object {
+        var cnt = 0
+
+        internal operator fun Array<Array<Cell>>.get(p: Point) = this[p.row][p.col]
+        internal operator fun Array<Array<Cell>>.set(p: Point, c: Cell) {
+            this[p.row][p.col] = c
+        }
+
         private fun generate(size: Int, pieces: Int) =
                 (0..size-1)
                         .map { row ->

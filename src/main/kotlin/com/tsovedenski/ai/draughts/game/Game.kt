@@ -1,5 +1,6 @@
 package com.tsovedenski.ai.draughts.game
 
+import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.players.Player
 
 /**
@@ -11,7 +12,7 @@ interface Game {
     interface ActionListener {
         fun beforeStart()
         fun beforeMove(state: State, player: Player)
-        fun afterMove(state: State, player: Player)
-        fun afterFinish(winner: Player?)
+        fun afterMove(state: State, player: Player, move: Move)
+        fun afterFinish(state: State, winner: Player?)
     }
 }

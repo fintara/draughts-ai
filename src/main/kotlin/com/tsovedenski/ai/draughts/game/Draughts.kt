@@ -27,13 +27,15 @@ class Draughts (val size: Int, val pieces: Int): Game {
         var state = State(size, pieces)
         var winner: Player? = null
 
-//        println(state.toString())
-
         let gameloop@ {
             while (true) {
                 players.forEach { player ->
-                    state = turn(state, player)
-                    listener.afterMove(state, player)
+                    listener.beforeMove(state, player)
+
+                    val move = player.move(state)
+                    state = state.apply(move)
+
+                    listener.afterMove(state, player, move)
 
                     winner = state.winner(player)
 
@@ -44,12 +46,6 @@ class Draughts (val size: Int, val pieces: Int): Game {
             }
         }
 
-        listener.afterFinish(winner)
-    }
-
-    private fun turn(state: State, player: Player): State {
-        listener.beforeMove(state, player)
-        val move = player.move(state)
-        return state.apply(move)
+        listener.afterFinish(state, winner)
     }
 }
