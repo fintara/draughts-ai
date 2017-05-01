@@ -1,5 +1,6 @@
 package com.tsovedenski.ai.draughts.game
 
+import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.game.elements.Point
 import com.tsovedenski.ai.draughts.players.Player
@@ -35,11 +36,35 @@ class StateTest {
     }
 
     @Test
+    fun `piece in the middle has two choices`() {
+        val p = Point(5,2)
+        val moves = state.moves(p)
+        assertEquals(2, moves.size)
+        assertTrue(Point(4,1) in moves)
+        assertTrue(Point(4,3) in moves)
+    }
+
+    @Test
+    fun `piece can jump over two opponents pieces`() {
+        state = state.apply(Move(2,5,3,4))
+        state = state.apply(Move(3,4,4,3))
+        state = state.apply(Move(1,6,2,5))
+
+        val p = Point(5,2)
+        val moves = state.moves(p)
+        assertEquals(3, moves.size)
+        assertTrue(Point(4,1) in moves)
+        assertTrue(Point(3,4) in moves)
+        assertTrue(Point(1,6) in moves)
+    }
+
+    @Test
     fun `moves validity`() {
         state = state.apply(Move(2,3,3,4))
         state = state.apply(Move(3,4,4,5))
 
         val moves = hashMapOf(
+                Move(0,0,1,1)   to false,
                 Move(1,1,2,1)   to false,
                 Move(1,1,0,-1)  to false,
                 Move(1,1,3,2)   to false,
@@ -54,6 +79,21 @@ class StateTest {
         )
 
         moves.forEach { move, isValid -> assertEquals(move.toString(), isValid, state.valid(move)) }
+    }
+
+    @Test
+    fun `moves by own player`() {
+        state = state.apply(Move(2,3,3,4))
+        state = state.apply(Move(3,4,4,5))
+
+        val moves = listOf(
+                Triple(Move(5,2,4,3), Color.Black, false),
+                Triple(Move(5,2,4,3), Color.White, true),
+                Triple(Move(2,5,3,4), Color.Black, true),
+                Triple(Move(2,5,3,4), Color.White, false)
+        )
+
+        moves.forEach { (move, color, isValid) -> assertEquals(move.toString(), isValid, state.valid(move, color)) }
     }
 
     /**
@@ -78,4 +118,28 @@ class StateTest {
        col| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |col
      */
 
+    @Test
+    fun `piece promoted to king`() {
+        val moves = listOf(
+                Move(2,3,3,4),
+                Move(3,4,4,5),
+                Move(1,4,2,3),
+                Move(2,3,3,2),
+                Move(3,2,4,1),
+                Move(0,5,1,4),
+                Move(1,4,2,3),
+                Move(5,0,1,4),
+                Move(1,4,0,5)
+        )
+
+
+
+        moves.forEach {
+            state = state.apply(it)
+        }
+
+        assertNotNull(state[Point(0,5)]?.piece)
+        assertTrue(state[Point(0,5)]!!.piece!!.king)
+        assertEquals(Color.White, state[Point(0,5)]!!.piece!!.color)
+    }
 }

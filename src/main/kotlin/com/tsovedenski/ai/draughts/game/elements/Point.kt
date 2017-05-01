@@ -5,26 +5,30 @@ package com.tsovedenski.ai.draughts.game.elements
  */
 data class Point (val row: Int, val col: Int) {
 
-    fun diagonal(other: Point): List<Point> {
-        val minRow = Math.min(row, other.row)
-        val maxRow = Math.max(row, other.row)
-        val minCol = Math.min(col, other.col)
-        val maxCol = Math.max(col, other.col)
+    fun diagonal(o: Point): List<Point> {
+        val diff = when {
+            row - o.row < 0 && col - o.col > 0 -> Point(1, -1)
+            row - o.row < 0 && col - o.col < 0 -> Point(1, 1)
+            row - o.row > 0 && col - o.col < 0 -> Point(-1, 1)
+            else -> Point(-1, -1)
+        }
 
         val list = mutableListOf<Point>()
 
-        for (row in minRow+1..maxRow-1) {
-            for (col in minCol+1..maxCol-1) {
-                list.add(Point(row, col))
-            }
+        if (this - o < 1) {
+            return list
+        }
+
+        for (i in 1..(this - o)) {
+            list.add(this + diff * i)
         }
 
         return list
     }
 
     operator fun plus(other: Point) = Point(row + other.row, col + other.col)
-
-    operator fun minus(other: Point) = Math.abs(row - other.row) + Math.abs(col - other.col) - 1
+    operator fun minus(other: Point) = Math.max(0, Math.abs(row - other.row) - 1)
+    operator fun times(num: Int) = Point(row * num, col * num)
 
     override fun toString(): String {
         return "($row, $col)"

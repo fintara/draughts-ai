@@ -30,13 +30,14 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
             return false
         }
 
-        log.info("$move is valid")
         return true
     }
 
     fun valid(move: Move): Boolean {
         val from = move.from
         val to   = move.to
+
+        log.trace("$move checking validity")
 
         // points exist
         if (!board.containsKey(from) || !board.containsKey(to)) {
@@ -62,15 +63,22 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
             return false
         }
 
-        // too big jump
-        if (from - to > 3) {
-            log.info("$move contains too big jump (${from - to})")
-            return false
-        }
-
-        from.diagonal(to).forEach {
-            if (board[it]!!.piece == null || (board[it]!!.piece!!.color == board[from]!!.piece!!.color)) {
-                log.info("$move goes through invalid diagonal (empty cells or own pieces)")
+        val diagonal = from.diagonal(to)
+        if (diagonal.isNotEmpty()) {
+            var opponentsCount = 0
+            var emptyCnt = 0
+            diagonal.forEach {
+                if (board[it]!!.piece == null) {
+                    emptyCnt++
+                } else if (board[it]!!.piece!!.color == board[from]!!.piece!!.color) {
+                    log.info("$move goes through invalid diagonal (own pieces)")
+                    return false
+                } else {
+                    opponentsCount++
+                }
+            }
+            if (opponentsCount - 1 != emptyCnt) {
+                log.info("$move goes through invalid diagonal (empty spaces)")
                 return false
             }
         }
@@ -90,8 +98,18 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
     }
 
     fun moves(p: Point): List<Point> {
-        return listOf(p + Point(1, 1), p + Point(1, -1), p + Point(-1, -1), p + Point(-1, 1))
-                .filter { valid(Move(from = p, to = it)) }
+        log.info("Generating moves for point $p")
+        val lists = mutableListOf<List<Point>>()
+
+        for (i in 1..size/2) {
+            lists.add(listOf(p + Point(i, i), p + Point(i, -i), p + Point(-i, -i), p + Point(-i, i))
+                .filter { valid(Move(from = p, to = it)) })
+        }
+
+        val list = lists.flatten()
+        log.info("Point $p has ${list.size} move(s)")
+
+        return list
     }
 
     fun apply(move: Move): State {
@@ -108,21 +126,12 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         cloned.board[move.to] = cloned.board[move.to]!!.copy(piece = piece)
 
         // remove opponents pieces on the path
-        if (move.from - move.to > 1) {
-            val minRow = Math.min(move.from.row, move.to.row)
-            val maxRow = Math.max(move.from.row, move.to.row)
-            val minCol = Math.min(move.from.col, move.to.col)
-            val maxCol = Math.max(move.from.col, move.to.col)
-
-            for (row in minRow+1..maxRow-1) {
-                for (col in minCol+1..maxCol-1) {
-                    val p = Point(row, col)
-                    log.info("Going through intermediate point $p")
-                    if (cloned.board[p]!!.piece?.color == cloned.board[move.to]!!.piece!!.color.opposite()) {
-                        log.info("Point $p has opponent's piece, removing it")
-                        cloned.board[p] = cloned.board[p]!!.copy(piece = null)
-                    }
-                }
+        val diagonal = move.from.diagonal(move.to)
+        diagonal.forEach { p ->
+            log.info("Going through intermediate point $p")
+            if (cloned.board[p]!!.piece?.color == cloned.board[move.to]!!.piece!!.color.opposite()) {
+                log.info("Point $p has opponent's piece, removing it")
+                cloned.board[p] = cloned.board[p]!!.copy(piece = null)
             }
         }
 
