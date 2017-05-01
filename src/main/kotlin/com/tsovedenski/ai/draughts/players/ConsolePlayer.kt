@@ -21,7 +21,7 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
         do {
             print("$this, Your move (row,col,row,col): ")
             move = parse(scanner.nextLine().trim())
-        } while (move == null || !state.valid(move))
+        } while (move == null || !state.valid(move, color))
 
         return move
     }
@@ -41,7 +41,7 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
         try {
             val from = Point(matcher.group(1).toInt(), matcher.group(2).toInt())
             val to = Point(matcher.group(3).toInt(), matcher.group(4).toInt())
-            return Move(this, from, to)
+            return Move(from, to)
         } catch (t: Throwable) {
             log.error("Got error during parsing $text")
             t.printStackTrace()
