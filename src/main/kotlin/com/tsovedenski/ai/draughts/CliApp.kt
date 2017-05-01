@@ -12,17 +12,15 @@ import com.tsovedenski.ai.draughts.players.Player
  * Created by Tsvetan Ovedenski on 30/04/17.
  */
 fun main(args: Array<String>) {
-//    val game = Game(6, 7, 4)
-    val game = Draughts()
-    game.listener = Listener
+
+    val game = Draughts().apply {
+        listener = Listener
+    }
 
     val p1 = ConsolePlayer("John", Color.White)
     val p2 = ConsolePlayer("Bob", Color.Black)
 //    val p2 = MinimaxPlayer(depth = 3, color = Color.Black)
 //    val p2 = AlphabetaPlayer(depth = 3, color = Color.Black)
-
-//    val p1 = MinimaxPlayer(depth = 3, color = Color.Red)
-//    val p2 = AlphabetaPlayer(depth = 1, color = Color.Black)
 
     game.play(p1, p2)
 }

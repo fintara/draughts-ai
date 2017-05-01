@@ -163,13 +163,16 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         for (i in 0..size*size-1 step size) {
             val row = board.keys.toList().subList(i, i+size)
             val rowIndex = i / size
-            builder.appendln("${String.format("%1$3d", rowIndex)}| ${row.map { point ->
+            builder.appendln("${String.format("%1$3d", rowIndex)}│${row.map { point ->
                 val it = board[point]!!
                 when (it.allowed) {
-                    true -> it.piece?.color?.char ?: '░'
-                    else -> ' '
+                    true -> when (it.piece?.color?.char) {
+                        null -> "░░░"
+                        else -> " ${it.piece.color.char} "
+                    }
+                    else -> "   "
                 }
-            }.joinToString(" | ")} |$rowIndex")
+            }.joinToString("│")}│$rowIndex")
             builder.appendln(divider)
         }
 
