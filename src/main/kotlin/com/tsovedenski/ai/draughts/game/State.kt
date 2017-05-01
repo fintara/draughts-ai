@@ -112,6 +112,8 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         return list
     }
 
+    fun count(color: Color) = board.values.map { it.piece?.color }.filter { it == color }.size
+
     fun apply(move: Move): State {
         if (!valid(move)) {
             log.error("Tried to apply illegal move $move")
