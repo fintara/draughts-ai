@@ -1,9 +1,10 @@
 package com.tsovedenski.ai.draughts.game
 
-import com.tsovedenski.ai.draughts.game.elements.*
+import com.tsovedenski.ai.draughts.game.elements.Cell
+import com.tsovedenski.ai.draughts.game.elements.Move
+import com.tsovedenski.ai.draughts.game.elements.Point
 import com.tsovedenski.ai.draughts.players.Player
-import java.util.*
-import kotlin.collections.LinkedHashMap
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
@@ -19,31 +20,43 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
     }
 
     fun valid(move: Move): Boolean {
+        // points exist
         if (!board.containsKey(move.from) || !board.containsKey(move.to)) {
+            log.info("$move contains point out of boundaries")
             return false
         }
 
+        // move is diagonal
+        if (Math.abs(move.from.row - move.to.row) != Math.abs(move.from.col - move.to.col)) {
+            log.info("$move is not diagonal")
+            return false
+        }
+
+        // points are allowed
         if (!board[move.from]!!.allowed || !board[move.to]!!.allowed) {
+            log.info("$move contains point on not allowed square")
             return false
         }
 
-        if (board[move.from]!!.piece == null) {
+        // from has piece and to doesn't
+        if (board[move.from]!!.piece == null || board[move.to]!!.piece != null) {
+            log.info("$move contains point without piece (from) or existing piece (to)")
             return false
         }
 
-        if (board[move.to]!!.piece != null) {
-            return false
-        }
-
+        // from has player's piece
         if (board[move.from]!!.piece!!.color != move.player.color) {
+            log.info("$move contains point from with not player's piece")
             return false
         }
 
+        log.info("$move is valid")
         return true
     }
 
     fun apply(move: Move): State {
         if (!valid(move)) {
+            log.error("Tried to apply illegal move $move")
             throw RuntimeException("Illegal move $move")
         }
 
@@ -89,7 +102,7 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
             }.joinToString(" | ")} |")
             builder.appendln(divider)
         }
-        
+
         builder.append("col| ${(0..Math.min(9, size-1)).toList().joinToString(" | ")} |")
         if (size > 10) {
             builder.append(" ${(10..size-1).toList().joinToString("| ")}|")
@@ -101,6 +114,8 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
 
     companion object {
         var cnt = 0
+
+        private val log = LoggerFactory.getLogger(State::class.java)
 
         private fun generate(size: Int, pieces: Int) = LinkedHashMap<Point, Cell>().apply {
             (0..size-1).forEach { row ->

@@ -4,6 +4,7 @@ import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.game.elements.Point
 import com.tsovedenski.ai.draughts.game.State
 import com.tsovedenski.ai.draughts.game.elements.Color
+import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.regex.Pattern
 
@@ -33,6 +34,7 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
 
         val matcher = MOVE_PATTERN.matcher(text)
         if (!matcher.find()) {
+            log.info("$text did not contain valid move")
             return null
         }
 
@@ -41,6 +43,7 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
             val to = Point(matcher.group(3).toInt(), matcher.group(4).toInt())
             return Move(this, from, to)
         } catch (t: Throwable) {
+            log.error("Got error during parsing $text")
             t.printStackTrace()
             return null
         }
@@ -48,6 +51,6 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
 
     companion object {
         private val MOVE_PATTERN = Pattern.compile("^(\\d+),(\\d+),(\\d+),(\\d+)$")
-
+        private val log = LoggerFactory.getLogger(ConsolePlayer::class.java)
     }
 }
