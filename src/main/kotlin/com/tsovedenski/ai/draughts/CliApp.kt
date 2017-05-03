@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 
     val p1 = ConsolePlayer("John", Color.White)
 //    val p2 = ConsolePlayer("Bob", Color.Black)
-    val p2 = MinimaxPlayer(depth = 3, color = Color.Black, evaluator = DifferenceEvaluator)
+    val p2 = MinimaxPlayer(depth = 5, color = Color.Black, evaluator = DifferenceEvaluator)
 //    val p2 = AlphabetaPlayer(depth = 3, color = Color.Black)
 
     game.play(p1, p2)

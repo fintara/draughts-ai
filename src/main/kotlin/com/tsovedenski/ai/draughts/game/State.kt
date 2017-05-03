@@ -26,7 +26,7 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
 
         // from has player's piece
         if (board[move.from]!!.piece!!.color != color) {
-            log.info("$move contains point (from) with not player's piece")
+            log.trace("$move contains point (from) with not player's piece")
             return false
         }
 
@@ -41,25 +41,25 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
 
         // points exist
         if (!board.containsKey(from) || !board.containsKey(to)) {
-            log.info("$move contains point out of boundaries")
+            log.trace("$move contains point out of boundaries")
             return false
         }
 
         // move is diagonal
         if (Math.abs(from.row - to.row) != Math.abs(from.col - to.col)) {
-            log.info("$move is not diagonal")
+            log.trace("$move is not diagonal")
             return false
         }
 
         // points are allowed
         if (!board[from]!!.allowed || !board[to]!!.allowed) {
-            log.info("$move contains point on not allowed square")
+            log.trace("$move contains point on not allowed square")
             return false
         }
 
         // from has piece and to doesn't
         if (board[from]!!.piece == null || board[to]!!.piece != null) {
-            log.info("$move contains point without piece (from) or existing piece (to)")
+            log.trace("$move contains point without piece (from) or existing piece (to)")
             return false
         }
 
@@ -68,17 +68,17 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
             val piece = board[point]!!.piece
 
             if (piece != null && piece.color == board[from]!!.piece!!.color) {
-                log.info("$move goes through invalid diagonal (own pieces)")
+                log.trace("$move goes through invalid diagonal (own pieces)")
                 return false
             }
 
             if (index and 1 == 0 && piece == null) {
-                log.info("$move goes through invalid diagonal (empty cell)")
+                log.trace("$move goes through invalid diagonal (empty cell)")
                 return false
             }
 
             if (index and 1 == 1 && piece != null) {
-                log.info("$move goes through invalid diagonal (non-empty cell)")
+                log.trace("$move goes through invalid diagonal (non-empty cell)")
                 return false
             }
         }
@@ -89,7 +89,7 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
             if ((fromPiece.color == Color.White && from.row - to.row < 0) ||
                  fromPiece.color == Color.Black && from.row - to.row > 0) {
 
-                log.info("$move goes backwards (from piece is not king)")
+                log.trace("$move goes backwards (from piece is not king)")
                 return false
             }
         }
@@ -98,7 +98,7 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
     }
 
     fun moves(p: Point): List<Point> {
-        log.info("Generating moves for point $p")
+        log.trace("Generating moves for point $p")
         val lists = mutableListOf<List<Point>>()
 
         for (i in 1..size/2) {
@@ -107,13 +107,13 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         }
 
         val list = lists.flatten()
-        log.info("Point $p has ${list.size} move(s)")
+        log.trace("Point $p has ${list.size} move(s)")
 
         return list
     }
 
     fun moves(color: Color): List<Move> {
-        log.info("Finding possible moves for color $color")
+        log.trace("Finding possible moves for color $color")
         val moves = mutableListOf<Move>()
 
         pieces(color).forEach { piece ->
@@ -145,9 +145,9 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         // remove opponents pieces on the path
         val diagonal = move.from.diagonal(move.to)
         diagonal.forEach { p ->
-            log.info("Going through intermediate point $p")
+            log.trace("Going through intermediate point $p")
             if (cloned.board[p]!!.piece?.color == cloned.board[move.to]!!.piece!!.color.opposite()) {
-                log.info("Point $p has opponent's piece, removing it")
+                log.debug("Point $p has opponent's piece, removing it")
                 cloned.board[p] = cloned.board[p]!!.copy(piece = null)
             }
         }
@@ -156,7 +156,7 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         if ((move.to.row == 0        && piece.color == Color.White) ||
             (move.to.row == size - 1 && piece.color == Color.Black)) {
 
-            log.info("Promoting $piece at ${move.to} to king")
+            log.debug("Promoting $piece at ${move.to} to king")
             cloned.board[move.to] = cloned.board[move.to]!!.copy(piece = piece.copy(king = true))
         }
 

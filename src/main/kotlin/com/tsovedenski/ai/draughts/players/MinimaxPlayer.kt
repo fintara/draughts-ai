@@ -10,14 +10,9 @@ import com.tsovedenski.ai.draughts.game.evaluators.Evaluator
  */
 class MinimaxPlayer (val depth: Int, color: Color, evaluator: Evaluator): ArtificialPlayer(color, evaluator) {
 
-    override fun move(state: State): Move {
-        var result: ScoreMovePair
-
-        do {
-            result = minimax(state, color, depth)
-        } while (result.move == null)
-
-        return result.move!!;
+    override fun move(state: State): Move? {
+        val result = minimax(state, color, depth)
+        return result.move
     }
 
     private fun minimax(state: State, color: Color, depth: Int): ScoreMovePair {

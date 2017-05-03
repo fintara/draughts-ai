@@ -15,23 +15,24 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
 
     private val scanner = Scanner(System.`in`)
 
-    override fun move(state: State): Move {
+    override fun move(state: State): Move? {
         var move: Move?
 
         do {
             print("$this, Your move (row,col,row,col): ")
-            move = parse(scanner.nextLine().trim())
+            val text = scanner.nextLine().trim()
+
+            if (text.toLowerCase() == "q") {
+                return null
+            }
+
+            move = parse(text)
         } while (move == null || !state.valid(move, color))
 
         return move
     }
 
     private fun parse(text: String): Move? {
-        if (text.toLowerCase() == "q") {
-            println("$this gives up! Winner is the opponent. Exiting...")
-            System.exit(0)
-        }
-
         val matcher = MOVE_PATTERN.matcher(text)
         if (!matcher.find()) {
             log.info("$text did not contain valid move")

@@ -1,6 +1,8 @@
 package com.tsovedenski.ai.draughts.game
 
+import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.players.Player
+import org.slf4j.LoggerFactory
 
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
@@ -24,6 +26,7 @@ class Draughts (val size: Int, val pieces: Int): Game {
 
         listener?.beforeStart()
 
+        val moves = mutableListOf<Move>()
         var state = State(size, pieces)
         var winner: Player? = null
 
@@ -33,9 +36,19 @@ class Draughts (val size: Int, val pieces: Int): Game {
                     listener?.beforeMove(state, player)
 
                     val move = player.move(state)
+
+                    if (move == null) {
+                        log.warn("$player did not choose a move. Winner is the opponent")
+                        winner = players.find { it != player }
+                        return@gameloop
+                    }
+
+                    moves.add(move)
                     state = state.apply(move)
 
                     listener?.afterMove(state, player, move)
+
+                    log.debug("Moves so far:\n${moves.map { "Move(${it.from.row},${it.from.col},${it.to.row},${it.to.col})," }.joinToString("\n")}")
 
                     state.winner(player.color)?.let { color ->
                         winner = players.find { it.color == color }
@@ -48,6 +61,11 @@ class Draughts (val size: Int, val pieces: Int): Game {
             }
         }
 
+        log.warn("${moves.size} move(s):\n${moves.map { "Move(${it.from.row},${it.from.col},${it.to.row},${it.to.col})," }.joinToString("\n")}")
         listener?.afterFinish(state, winner)
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(Draughts::class.java)
     }
 }
