@@ -91,7 +91,7 @@ class StateTest {
     }
 
     @Test
-    fun `piece can jump over two opponents pieces`() {
+    fun `piece can jump over two opponents pieces with one empty between`() {
         state = state.apply(Move(2, 5, 3, 4))
         state = state.apply(Move(3, 4, 4, 3))
         state = state.apply(Move(1, 6, 2, 5))
@@ -102,6 +102,101 @@ class StateTest {
         assertTrue(Point(4, 1) in moves)
         assertTrue(Point(3, 4) in moves)
         assertTrue(Point(1, 6) in moves)
+    }
+
+    @Test
+    fun `piece cannot jump over two opponents pieces without empty between`() {
+        val moves = listOf(
+                Move(5,0,4,1),
+                Move(2,1,3,2),
+                Move(5,2,4,3),
+                Move(3,2,5,0),
+                Move(6,1,5,2)
+        )
+
+        moves.forEach {
+            state = state.apply(it)
+        }
+
+        val badMove = Move(2,5,6,1)
+
+        assertFalse(state.valid(badMove))
+    }
+
+    @Test
+    fun `piece cannot jump over three opponents pieces without empty between`() {
+        val moves = listOf(
+                Move(5,2,4,3),
+                Move(2,1,3,2),
+                Move(6,1,5,2),
+                Move(1,0,2,1),
+                Move(5,2,4,1),
+                Move(0,1,1,0),
+                Move(5,6,4,5),
+                Move(2,1,3,0),
+                Move(6,3,5,2),
+                Move(1,0,2,1),
+                Move(6,7,5,6),
+                Move(2,5,3,6),
+                Move(5,6,4,7),
+                Move(1,4,2,5),
+                Move(7,4,6,3)
+        )
+
+        moves.forEach {
+            state = state.apply(it)
+        }
+
+        val badMove = Move(3,0,7,4)
+
+        assertFalse(state.valid(badMove))
+    }
+
+    @Test
+    fun `piece cannot jump over two opponents without empty at all`() {
+        val moves = listOf(
+                Move(5,0,4,1),
+                Move(2,1,3,2),
+                Move(5,2,4,3),
+                Move(3,2,5,0),
+                Move(6,1,5,2),
+                Move(1,0,2,1),
+                Move(5,4,4,5),
+                Move(0,1,1,0),
+                Move(5,6,4,7),
+                Move(2,1,3,2),
+                Move(4,3,2,1),
+                Move(1,0,3,2),
+                Move(5,2,4,1),
+                Move(1,2,2,1),
+                Move(4,1,3,0),
+                Move(2,5,3,6),
+                Move(4,7,2,5),
+                Move(1,4,3,6),
+                Move(6,5,5,4),
+                Move(0,5,1,4),
+                Move(6,7,5,6),
+                Move(1,4,2,5),
+                Move(7,6,6,5),
+                Move(3,2,4,1),
+                Move(7,0,6,1),
+                Move(2,1,3,2),
+                Move(3,0,2,1),
+                Move(4,1,5,2),
+                Move(6,3,4,1),
+                Move(0,3,1,2),
+                Move(2,1,1,0),
+                Move(1,2,2,1),
+                Move(4,1,3,0)
+        )
+
+        moves.forEach {
+            state = state.apply(it)
+        }
+
+        val badMove = Move(3,6,6,3)
+
+        assertFalse(state.valid(badMove))
     }
 
     @Test

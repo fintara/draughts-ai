@@ -64,21 +64,21 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         }
 
         val diagonal = from.diagonal(to)
-        if (diagonal.isNotEmpty()) {
-            var opponentsCount = 0
-            var emptyCnt = 0
-            diagonal.forEach {
-                if (board[it]!!.piece == null) {
-                    emptyCnt++
-                } else if (board[it]!!.piece!!.color == board[from]!!.piece!!.color) {
-                    log.info("$move goes through invalid diagonal (own pieces)")
-                    return false
-                } else {
-                    opponentsCount++
-                }
+        diagonal.forEachIndexed { index, point ->
+            val piece = board[point]!!.piece
+
+            if (piece != null && piece.color == board[from]!!.piece!!.color) {
+                log.info("$move goes through invalid diagonal (own pieces)")
+                return false
             }
-            if (opponentsCount - 1 != emptyCnt) {
-                log.info("$move goes through invalid diagonal (empty spaces)")
+
+            if (index and 1 == 0 && piece == null) {
+                log.info("$move goes through invalid diagonal (empty cell)")
+                return false
+            }
+
+            if (index and 1 == 1 && piece != null) {
+                log.info("$move goes through invalid diagonal (non-empty cell)")
                 return false
             }
         }
@@ -111,6 +111,21 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
 
         return list
     }
+
+    fun moves(color: Color): List<Move> {
+        log.info("Finding possible moves for color $color")
+        val moves = mutableListOf<Move>()
+
+        pieces(color).forEach { piece ->
+            moves(piece).forEach { dest ->
+                moves.add(Move(from = piece, to = dest))
+            }
+        }
+
+        return moves.filter { valid(it, color) }
+    }
+
+    fun pieces(color: Color) = board.keys.filter { board[it]?.piece?.color == color }.toList()
 
     fun count(color: Color) = board.values.map { it.piece?.color }.filter { it == color }.size
 
@@ -149,11 +164,14 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
     }
 
     fun winner(color: Color): Color? {
-        if (cnt++ == 6) {
+        if (isWinner(color)) {
             return color
         }
+
         return null
     }
+
+    fun isWinner(color: Color) = count(color.opposite()) == 0
 
     operator fun get(p: Point) = board[p]
 
