@@ -27,7 +27,7 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
             }
 
             move = parse(text)
-        } while (move == null || !state.valid(move, color))
+        } while (move == null || !state.valid(move, color) || move !in state.moves(color))
 
         return move
     }

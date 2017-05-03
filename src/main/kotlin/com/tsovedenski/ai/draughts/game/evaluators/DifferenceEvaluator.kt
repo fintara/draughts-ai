@@ -9,6 +9,9 @@ import com.tsovedenski.ai.draughts.game.elements.Color
 object DifferenceEvaluator: Evaluator {
 
     override fun evaluate(state: State, color: Color): Int {
-        return state.count(color) - state.count(color.opposite())
+        val own = state.count(color)
+        val opp = state.count(color.opposite())
+
+        return own - opp
     }
 }
