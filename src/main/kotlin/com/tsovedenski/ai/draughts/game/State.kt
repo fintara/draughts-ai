@@ -157,7 +157,7 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
     }
 
     fun points(color: Color) = board.keys.filter { board[it]?.piece?.color == color }.toList()
-    fun pieces(color: Color) = points(color).map { board[it] }
+    fun pieces(color: Color) = points(color).map { board[it]!! }
 
     fun count(color: Color) = board.values.map { it.piece?.color }.filter { it == color }.size
 

@@ -120,8 +120,6 @@ class StateForcedCaptureTest {
 
 
 
-
-
     @Test
 
             /**

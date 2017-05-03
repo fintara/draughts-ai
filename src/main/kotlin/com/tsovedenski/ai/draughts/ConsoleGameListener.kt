@@ -1,33 +1,13 @@
 package com.tsovedenski.ai.draughts
 
-import com.tsovedenski.ai.draughts.game.Draughts
 import com.tsovedenski.ai.draughts.game.Game
 import com.tsovedenski.ai.draughts.game.State
-import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
-import com.tsovedenski.ai.draughts.game.evaluators.DifferenceEvaluator
-import com.tsovedenski.ai.draughts.players.AlphabetaPlayer
-import com.tsovedenski.ai.draughts.players.ConsolePlayer
-import com.tsovedenski.ai.draughts.players.MinimaxPlayer
 import com.tsovedenski.ai.draughts.players.Player
 
 /**
- * Created by Tsvetan Ovedenski on 30/04/17.
+ * Created by Tsvetan Ovedenski on 03/05/17.
  */
-fun main(args: Array<String>) {
-
-    val game = Draughts().apply {
-        listener = ConsoleGameListener
-    }
-
-    val p1 = ConsolePlayer("John", Color.White)
-//    val p2 = ConsolePlayer("Bob", Color.Black)
-//    val p1 = AlphabetaPlayer(depth = 6, color = Color.White, evaluator = DifferenceEvaluator)
-    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = DifferenceEvaluator)
-
-    game.play(p1, p2)
-}
-
 object ConsoleGameListener : Game.ActionListener {
     override fun beforeStart() = println("Starting Draughts")
 

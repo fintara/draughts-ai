@@ -39,7 +39,7 @@ class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean): Gam
                     listener?.beforeMove(state, player)
 
                     if (state.isStalemate(player.color)) {
-                        log.warn("$player does not have possible moves. Winner is the opponent")
+                        log.warn("$player does not have possible moves. Winner is the opponent!")
                         winner = players.find { it != player }
                         return@gameloop
                     }
@@ -47,7 +47,7 @@ class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean): Gam
                     val move = player.move(state)
 
                     if (move == null) {
-                        log.warn("$player choosed to give up. Winner is the opponent")
+                        log.warn("$player choosed to give up. Winner is the opponent!")
                         winner = players.find { it != player }
                         return@gameloop
                     }
@@ -58,6 +58,7 @@ class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean): Gam
                     listener?.afterMove(state, player, move)
 
                     state.winner(player.color)?.let { color ->
+                        log.warn("$player's opponent is left without pieces. Winner is $player!")
                         winner = players.find { it.color == color }
                     }
 
