@@ -92,16 +92,23 @@ class StateTest {
 
     @Test
     fun `piece can jump over two opponents pieces with one empty between`() {
-        state = state.apply(Move(2, 5, 3, 4))
-        state = state.apply(Move(3, 4, 4, 3))
-        state = state.apply(Move(1, 6, 2, 5))
+        val moves = listOf(
+                Move(2, 5, 3, 4),
+                Move(3, 4, 4, 3),
+                Move(1, 6, 2, 5)
+        )
+
+        moves.forEach {
+            state = state.apply(it)
+        }
 
         val p = Point(5, 2)
-        val moves = state.moves(p)
-        assertEquals(3, moves.size)
-        assertTrue(Point(4, 1) in moves)
-        assertTrue(Point(3, 4) in moves)
-        assertTrue(Point(1, 6) in moves)
+
+        val possiblePoints = state.moves(p)
+        assertEquals(3, possiblePoints.size)
+        assertTrue(Point(4, 1) in possiblePoints)
+        assertTrue(Point(3, 4) in possiblePoints)
+        assertTrue(Point(1, 6) in possiblePoints)
     }
 
     @Test
@@ -279,8 +286,52 @@ class StateTest {
             state = state.apply(it)
         }
 
-        assertNotNull(state[Point(0, 5)]?.piece)
-        assertTrue(state[Point(0, 5)]!!.piece!!.king)
-        assertEquals(Color.White, state[Point(0, 5)]!!.piece!!.color)
+        val point = Point(0, 5)
+        val cell = state[point]!!
+        val piece = cell.piece
+
+        assertNotNull(piece)
+        assertTrue(piece!!.king)
+        assertEquals(Color.White, piece.color)
+    }
+
+    @Test
+    fun `stalemate is possible`() {
+        val moves = listOf(
+                Move(5,0,4,1),
+                Move(2,1,3,2),
+                Move(4,1,3,0),
+                Move(1,0,2,1),
+                Move(6,1,5,0),
+                Move(0,1,1,0),
+                Move(7,2,6,1),
+                Move(2,3,3,4),
+                Move(5,2,4,1),
+                Move(1,2,2,3),
+                Move(6,1,5,2),
+                Move(0,3,1,2),
+                Move(7,0,6,1),
+                Move(2,5,3,6),
+                Move(5,4,4,3),
+                Move(1,4,2,5),
+                Move(6,3,5,4),
+                Move(0,5,1,4),
+                Move(5,6,4,5),
+                Move(3,4,5,6),
+                Move(6,5,4,7),
+                Move(3,6,4,5),
+                Move(7,4,6,3),
+                Move(2,5,3,4),
+                Move(7,6,6,5),
+                Move(1,4,2,5),
+                Move(6,5,5,6),
+                Move(2,7,3,6)
+        )
+
+        moves.forEach {
+            state = state.apply(it)
+        }
+
+        assertTrue(state.isStalemate(Color.White))
     }
 }

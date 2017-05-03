@@ -6,6 +6,7 @@ import com.tsovedenski.ai.draughts.game.State
 import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.game.evaluators.DifferenceEvaluator
+import com.tsovedenski.ai.draughts.players.AlphabetaPlayer
 import com.tsovedenski.ai.draughts.players.ConsolePlayer
 import com.tsovedenski.ai.draughts.players.MinimaxPlayer
 import com.tsovedenski.ai.draughts.players.Player
@@ -21,8 +22,8 @@ fun main(args: Array<String>) {
 
     val p1 = ConsolePlayer("John", Color.White)
 //    val p2 = ConsolePlayer("Bob", Color.Black)
-    val p2 = MinimaxPlayer(depth = 5, color = Color.Black, evaluator = DifferenceEvaluator)
-//    val p2 = AlphabetaPlayer(depth = 3, color = Color.Black)
+//    val p2 = MinimaxPlayer(depth = 5, color = Color.Black, evaluator = DifferenceEvaluator)
+    val p2 = AlphabetaPlayer(depth = 3, color = Color.Black, evaluator = DifferenceEvaluator)
 
     game.play(p1, p2)
 }

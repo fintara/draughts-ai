@@ -7,9 +7,10 @@ import org.slf4j.LoggerFactory
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
-class Draughts (val size: Int, val pieces: Int): Game {
+class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean): Game {
 
-    constructor(): this(8, 12)
+    constructor(): this(8, 12, true)
+    constructor(forcedCapture: Boolean): this(8, 12, forcedCapture)
 
     var listener: Game.ActionListener? = null
 
@@ -27,7 +28,7 @@ class Draughts (val size: Int, val pieces: Int): Game {
         listener?.beforeStart()
 
         val moves = mutableListOf<Move>()
-        var state = State(size, pieces)
+        var state = State(size, pieces, forcedCapture)
         var winner: Player? = null
 
         let gameloop@ {
@@ -35,10 +36,16 @@ class Draughts (val size: Int, val pieces: Int): Game {
                 players.forEach { player ->
                     listener?.beforeMove(state, player)
 
+                    if (state.isStalemate(player.color)) {
+                        log.warn("$player does not have possible moves. Winner is the opponent")
+                        winner = players.find { it != player }
+                        return@gameloop
+                    }
+
                     val move = player.move(state)
 
                     if (move == null) {
-                        log.warn("$player did not choose a move. Winner is the opponent")
+                        log.warn("$player choosed to give up. Winner is the opponent")
                         winner = players.find { it != player }
                         return@gameloop
                     }
@@ -47,8 +54,6 @@ class Draughts (val size: Int, val pieces: Int): Game {
                     state = state.apply(move)
 
                     listener?.afterMove(state, player, move)
-
-                    log.debug("Moves so far:\n${moves.map { "Move(${it.from.row},${it.from.col},${it.to.row},${it.to.col})," }.joinToString("\n")}")
 
                     state.winner(player.color)?.let { color ->
                         winner = players.find { it.color == color }

@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
 
-data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, val pieces: Int) {
-    constructor(size: Int, pieces: Int): this(generate(size, pieces), size, pieces)
+data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, val pieces: Int, val forcedCapture: Boolean) {
+
+    constructor(size: Int, pieces: Int): this(generate(size, pieces), size, pieces, false)
+    constructor(size: Int, pieces: Int, forcedCapture: Boolean): this(generate(size, pieces), size, pieces, forcedCapture)
 
     init {
         if (pieces % (size / 2) != 0) {
@@ -64,6 +66,10 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         }
 
         val diagonal = from.diagonal(to)
+        if (diagonal.isNotEmpty() && diagonal.size and 1 == 0) {
+            log.trace("$move goes through invalid diagonal (even number of cells in diagonal)")
+            return false
+        }
         diagonal.forEachIndexed { index, point ->
             val piece = board[point]!!.piece
 
@@ -97,35 +103,61 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         return true
     }
 
-    fun moves(p: Point): List<Point> {
-        log.trace("Generating moves for point $p")
+    /**
+     * Returns all possible destination points from a point
+     */
+    fun moves(point: Point): List<Point> {
+        log.trace("Generating moves for point $point")
         val lists = mutableListOf<List<Point>>()
 
         for (i in 1..size/2) {
-            lists.add(listOf(p + Point(i, i), p + Point(i, -i), p + Point(-i, -i), p + Point(-i, i))
-                .filter { valid(Move(from = p, to = it)) })
+            lists.add(
+                listOf(
+                    point + Point(i, i),
+                    point + Point(i, -i),
+                    point + Point(-i, -i),
+                    point + Point(-i, i)
+                ).filter { valid(Move(from = point, to = it)) }
+            )
         }
 
-        val list = lists.flatten()
-        log.trace("Point $p has ${list.size} move(s)")
+        val possiblePoints = lists.flatten()
 
-        return list
+        log.trace("Point $point has ${possiblePoints.size} possible move(s)")
+        return possiblePoints
     }
 
+    /**
+     * Returns all possible moves for a color
+     */
     fun moves(color: Color): List<Move> {
         log.trace("Finding possible moves for color $color")
         val moves = mutableListOf<Move>()
+        var jumpCount = 0
 
-        pieces(color).forEach { piece ->
-            moves(piece).forEach { dest ->
-                moves.add(Move(from = piece, to = dest))
+        points(color).forEach { point ->
+            val possibleMoves = moves(point)
+
+            if (forcedCapture) {
+                val jumpSizes = possibleMoves.map { point.diagonal(it).size }
+                val maxJump = jumpSizes.maxBy { it }
+                jumpCount += possibleMoves.map { point.diagonal(it).size }.filter { it > 0 && it == maxJump }.size
             }
+
+            moves.addAll(possibleMoves.map { Move(from = point, to = it) })
+        }
+
+        if (forcedCapture && jumpCount == 1/* && moves.map { it.from.diagonal(it.to).size }.filter { it > 0 }.size == 1*/) {
+            return listOf(
+                    moves.sortedBy { -it.from.diagonal(it.to).size }.first()
+            )
         }
 
         return moves.filter { valid(it, color) }
     }
 
-    fun pieces(color: Color) = board.keys.filter { board[it]?.piece?.color == color }.toList()
+    fun points(color: Color) = board.keys.filter { board[it]?.piece?.color == color }.toList()
+    fun pieces(color: Color) = points(color).map { board[it] }
 
     fun count(color: Color) = board.values.map { it.piece?.color }.filter { it == color }.size
 
@@ -153,8 +185,8 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
         }
 
         // promote to king
-        if ((move.to.row == 0        && piece.color == Color.White) ||
-            (move.to.row == size - 1 && piece.color == Color.Black)) {
+        if ((move.to.row == 0        && piece.color == Color.White && !piece.king) ||
+            (move.to.row == size - 1 && piece.color == Color.Black && !piece.king)) {
 
             log.debug("Promoting $piece at ${move.to} to king")
             cloned.board[move.to] = cloned.board[move.to]!!.copy(piece = piece.copy(king = true))
@@ -172,6 +204,7 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
     }
 
     fun isWinner(color: Color) = count(color.opposite()) == 0
+    fun isStalemate(color: Color) = moves(color).isEmpty()
 
     operator fun get(p: Point) = board[p]
 
@@ -215,8 +248,6 @@ data class State (private val board: LinkedHashMap<Point, Cell>, val size: Int, 
     }
 
     companion object {
-        var cnt = 0
-
         private val log = LoggerFactory.getLogger(State::class.java)
 
         private fun generate(size: Int, pieces: Int) = LinkedHashMap<Point, Cell>().apply {
