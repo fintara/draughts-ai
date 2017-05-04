@@ -21,7 +21,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile "ch.qos.logback:logback-classic:1.2.3"
-    compile "junit:junit:4.12"
+    testCompile "junit:junit:4.12"
 }
 
 compileKotlin {

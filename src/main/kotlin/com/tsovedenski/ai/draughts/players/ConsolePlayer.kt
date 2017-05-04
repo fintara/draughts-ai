@@ -18,6 +18,10 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
     override fun move(state: State): Move? {
         var move: Move?
 
+        val moves = state.moves(color)
+        println("Possible moves:")
+        moves.forEachIndexed { index, move -> println("${index+1}: $move") }
+
         do {
             print("$this, Your move (row,col,row,col): ")
             val text = scanner.nextLine().trim()
@@ -26,14 +30,27 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
                 return null
             }
 
-            move = parse(text)
+            move = parse(text, moves)
         } while (move == null || !state.valid(move, color) || move !in state.moves(color))
 
         return move
     }
 
-    private fun parse(text: String): Move? {
-        val matcher = MOVE_PATTERN.matcher(text)
+    private fun parse(text: String, moves: List<Move>): Move? {
+        var matcher = NUM_PATTERN.matcher(text)
+
+        if (matcher.find()) {
+            try {
+                val idx = matcher.group(1).toInt() - 1
+
+                if (idx >= 0 && idx < moves.size) {
+                    return moves[idx]
+                }
+            } catch (t: Throwable) {}
+        }
+
+
+        matcher = MOVE_PATTERN.matcher(text)
         if (!matcher.find()) {
             log.info("$text did not contain valid move")
             return null
@@ -51,6 +68,7 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
     }
 
     companion object {
+        private val NUM_PATTERN = Pattern.compile("^(\\d+)$")
         private val MOVE_PATTERN = Pattern.compile("^(\\d+),(\\d+),(\\d+),(\\d+)$")
         private val log = LoggerFactory.getLogger(ConsolePlayer::class.java)
     }

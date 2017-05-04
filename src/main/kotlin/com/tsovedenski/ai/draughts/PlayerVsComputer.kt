@@ -19,10 +19,10 @@ fun main(args: Array<String>) {
         listener = ConsoleGameListener
     }
 
-    val p1 = ConsolePlayer("John", Color.White)
+//    val p1 = ConsolePlayer("John", Color.White)
 
-//    val p1 = AlphabetaPlayer(depth = 5, color = Color.White, evaluator = KeepCloseEvaluator)
-    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = PersonalEvaluator)
+    val p1 = AlphabetaPlayer(depth = 5, color = Color.White, evaluator = KeepCloseEvaluator)
+    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = KeepCloseEvaluator)
 
     game.play(p1, p2)
 }
