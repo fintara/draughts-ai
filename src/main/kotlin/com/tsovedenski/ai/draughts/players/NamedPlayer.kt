@@ -7,7 +7,8 @@ import com.tsovedenski.ai.draughts.game.elements.Color
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
-interface Player {
-    val color: Color
-    fun move(state: State): Move?
+abstract class NamedPlayer (val name: String, override val color: Color): Player {
+    override fun toString(): String {
+        return "$name ($color ${color.char})"
+    }
 }

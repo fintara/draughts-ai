@@ -1,4 +1,4 @@
-package com.tsovedenski.ai.draughts.players
+package com.tsovedenski.ai.draughts.players.ai
 
 import com.tsovedenski.ai.draughts.game.State
 import com.tsovedenski.ai.draughts.game.elements.Color

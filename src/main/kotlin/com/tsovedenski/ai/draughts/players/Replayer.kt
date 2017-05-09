@@ -7,21 +7,18 @@ import com.tsovedenski.ai.draughts.game.elements.Move
 /**
  * Created by Tsvetan Ovedenski on 03/05/17.
  */
-class Replayer (color: Color, val moves: List<Move>, var pointer: Int): Player("Replayer #${++id}", color) {
+class Replayer (override val color: Color, val moves: List<Move>, var offset: Int, val step: Int): Player {
+
+    constructor(color: Color, moves: List<Move>, offset: Int): this(color, moves, offset, 2)
 
     override fun move(state: State): Move? {
-        if (pointer >= moves.size) {
+        if (offset >= moves.size) {
             return null
         }
 
-        val move = moves[pointer]
-        pointer += 2
+        val move = moves[offset]
+        offset += step
 
         return move
     }
-
-    companion object {
-        private var id = 0
-    }
-
 }

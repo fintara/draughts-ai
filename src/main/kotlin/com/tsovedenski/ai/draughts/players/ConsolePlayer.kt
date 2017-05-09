@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
-class ConsolePlayer (name: String, color: Color): Player(name, color) {
+class ConsolePlayer (name: String, color: Color): NamedPlayer(name, color) {
 
     private val scanner = Scanner(System.`in`)
 
@@ -20,7 +20,7 @@ class ConsolePlayer (name: String, color: Color): Player(name, color) {
 
         val moves = state.moves(color)
         println("Possible moves:")
-        moves.forEachIndexed { index, move -> println("${index+1}: $move") }
+        moves.forEachIndexed { index, move -> println("${index+1} -> ${move.from} to ${move.to} <- ${index+1}") }
 
         do {
             print("$this, Your move (row,col,row,col): ")
