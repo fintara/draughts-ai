@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
-class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean): Game {
+class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean, val maxMoves: Int): Game {
 
-    constructor(): this(8, 12, true)
-    constructor(forcedCapture: Boolean): this(8, 12, forcedCapture)
+    constructor(): this(size = 8, pieces = 12, forcedCapture = true, maxMoves = 256)
+    constructor(forcedCapture: Boolean): this(size = 8, pieces = 12, forcedCapture = forcedCapture, maxMoves = 100)
 
     var listener: Game.ActionListener? = null
 
@@ -36,6 +36,11 @@ class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean): Gam
         let gameloop@ {
             while (true) {
                 players.forEach { player ->
+                    if (moves.size >= maxMoves) {
+                        log.warn("Moves about the limit ($maxMoves). It's a tie.")
+                        return@gameloop
+                    }
+
                     listener?.beforeMove(state, player)
 
                     if (state.isStalemate(player.color)) {
@@ -47,7 +52,7 @@ class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean): Gam
                     val move = player.move(state)
 
                     if (move == null) {
-                        log.warn("$player choosed to give up. Winner is the opponent!")
+                        log.warn("$player chose to give up. Winner is the opponent!")
                         winner = players.find { it != player }
                         return@gameloop
                     }

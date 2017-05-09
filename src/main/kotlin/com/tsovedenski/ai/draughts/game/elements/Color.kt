@@ -5,16 +5,16 @@ package com.tsovedenski.ai.draughts.game.elements
  */
 enum class Color (val char: Char) {
     Black('●') {
-        override fun opposite(): com.tsovedenski.ai.draughts.game.elements.Color {
-            return com.tsovedenski.ai.draughts.game.elements.Color.White
+        override fun opposite(): Color {
+            return White
         }
     },
 
     White('○') {
-        override fun opposite(): com.tsovedenski.ai.draughts.game.elements.Color {
-            return com.tsovedenski.ai.draughts.game.elements.Color.Black
+        override fun opposite(): Color {
+            return Black
         }
     };
 
-    abstract fun opposite(): com.tsovedenski.ai.draughts.game.elements.Color
+    abstract fun opposite(): Color
 }

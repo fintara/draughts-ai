@@ -16,32 +16,44 @@ class AlphabetaPlayer (val depth: Int, color: Color, evaluator: Evaluator): Arti
     }
 
     private fun alphabeta(state: State, color: Color, depth: Int, alpha: Int, beta: Int): ScoreMovePair {
-        if (depth == 0) {
-            val stateScore = evaluate(state, color) * when (color == this.color) {
+        val states = state.moves(color).map { StateMovePair(state = state.apply(it), move = it) }
+
+        if (depth == 0 || states.isEmpty()) {
+            val score = evaluate(state, color) * when (color == this.color) {
                 true -> 1
                 else -> -1
             }
-            return ScoreMovePair(stateScore)
+
+            return ScoreMovePair(score)
         }
 
-        val states = state.moves(color)
-                .map { StateMovePair(state.apply(it), it) }
-
-        if (this.color == color) {
+        if (color == this.color) {
             var currentAlpha = DEFAULT_SCORE_PAIR.copy(score = alpha)
-            states.forEach { (state, move) ->
-                val result = alphabeta(state, color.opposite(), depth - 1, alpha, beta) // or other player
-                if (result.score > currentAlpha.score) currentAlpha = result.copy(move = move)
-                if (currentAlpha.score >= beta) return currentAlpha
+            states.forEach { (child, move) ->
+                val result = alphabeta(child, color.opposite(), depth - 1, alpha, beta)
+
+                if (result.score > currentAlpha.score) {
+                    currentAlpha = result.copy(move = move)
+                }
+
+                if (currentAlpha.score >= beta) {
+                    return currentAlpha
+                }
             }
             return currentAlpha
         }
 
         var currentBeta = DEFAULT_SCORE_PAIR.copy(score = beta)
-        states.forEach { (state, move) ->
-            val result = alphabeta(state, color.opposite(), depth - 1, alpha, beta) // or other player
-            if (result.score < currentBeta.score) currentBeta = result.copy(move = move)
-            if (alpha >= currentBeta.score) return currentBeta
+        states.forEach { (child, move) ->
+            val result = alphabeta(child, color.opposite(), depth - 1, alpha, beta)
+
+            if (result.score < currentBeta.score) {
+                currentBeta = result.copy(move = move)
+            }
+
+            if (alpha >= currentBeta.score) {
+                return currentBeta
+            }
         }
         return currentBeta
     }

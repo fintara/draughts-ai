@@ -5,9 +5,6 @@ import com.tsovedenski.ai.draughts.game.Game
 import com.tsovedenski.ai.draughts.game.State
 import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
-import com.tsovedenski.ai.draughts.game.evaluators.DifferenceEvaluator
-import com.tsovedenski.ai.draughts.game.evaluators.KeepCloseEvaluator
-import com.tsovedenski.ai.draughts.game.evaluators.PersonalEvaluator
 import com.tsovedenski.ai.draughts.players.*
 
 /**

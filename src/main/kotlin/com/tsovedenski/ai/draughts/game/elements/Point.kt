@@ -19,9 +19,7 @@ data class Point (val row: Int, val col: Int) {
             return list
         }
 
-        for (i in 1..(this - o)) {
-            list.add(this + diff * i)
-        }
+        (1..(this - o)).mapTo(list) { this + diff * it }
 
         return list
     }

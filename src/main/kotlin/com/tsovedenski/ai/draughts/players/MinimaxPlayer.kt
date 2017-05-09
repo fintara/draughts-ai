@@ -16,7 +16,9 @@ class MinimaxPlayer (val depth: Int, color: Color, evaluator: Evaluator): Artifi
     }
 
     private fun minimax(state: State, color: Color, depth: Int): ScoreMovePair {
-        if (depth == 0) {
+        val states = state.moves(color).map { StateMovePair(state.apply(it), it) }
+
+        if (depth == 0 || states.isEmpty()) {
             val stateScore = evaluate(state, color) * when (color == this.color) {
                 true -> 1
                 else -> -1
@@ -24,9 +26,7 @@ class MinimaxPlayer (val depth: Int, color: Color, evaluator: Evaluator): Artifi
             return ScoreMovePair(stateScore)
         }
 
-        val scores = state.moves(color)
-                .map { StateMovePair(state.apply(it), it) }
-                .map { ScoreMovePair(minimax(it.state, color.opposite(), depth - 1).score, it.move) }
+        val scores = states.map { ScoreMovePair(minimax(it.state, color.opposite(), depth - 1).score, it.move) }
 
         if (this.color == color) {
             return scores.maxBy { it.score } ?: DEFAULT_SCORE_PAIR
