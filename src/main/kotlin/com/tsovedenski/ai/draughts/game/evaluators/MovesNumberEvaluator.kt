@@ -6,10 +6,10 @@ import com.tsovedenski.ai.draughts.game.elements.Color
 /**
  * Created by Tsvetan Ovedenski on 09/05/17.
  */
-object MovesNumberEvaluator: Evaluator {
+class MovesNumberEvaluator (val factor: Int): Evaluator {
 
     override fun evaluate(state: State, color: Color): Int {
-        return state.moves(color).size
+        return state.moves(color).size * factor
     }
 
 }

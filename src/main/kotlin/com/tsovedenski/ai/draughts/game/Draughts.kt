@@ -23,7 +23,7 @@ class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean, val 
 
     override fun play(vararg players: Player) {
         if (players.size != 2) {
-            throw IllegalArgumentException("Expected 2 players (got ${players.size}")
+            throw IllegalArgumentException("Expected 2 players (got ${players.size})")
         } else if (players[0].color == players[1].color) {
             throw IllegalArgumentException("Players cannot have same color")
         }

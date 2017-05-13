@@ -23,7 +23,7 @@ class ConsolePlayer (name: String, color: Color): NamedPlayer(name, color) {
         moves.forEachIndexed { index, move -> println("${index+1} -> ${move.from} to ${move.to} <- ${index+1}") }
 
         do {
-            print("$this, Your move (row,col,row,col): ")
+            print("$this, Your move (# or row,col,row,col): ")
             val text = scanner.nextLine().trim()
 
             if (text.toLowerCase() == "q") {

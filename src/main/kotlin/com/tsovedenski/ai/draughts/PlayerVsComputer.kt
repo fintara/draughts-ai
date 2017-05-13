@@ -15,16 +15,25 @@ fun main(args: Array<String>) {
         listener = ConsoleGameListener
     }
 
-    val p1 = ConsolePlayer("John", Color.White)
+    val players = mutableListOf<Player>()
 
-    val multi = MultiEvaluator(
-            PiecesCountEvaluator(regularWeight = 1, kingWeight = 2),
-            TrappedKingsEvaluator(weight = 3)
+    players.add(ConsolePlayer("John", Color.White))
+
+    val multi1 = MultiEvaluator(
+            PiecesCountEvaluator(regularWeight = 30, kingWeight = 40),
+            TrappedKingsEvaluator(weight = -10),
+            MovesNumberEvaluator(factor = 10),
+            EaterEvaluator(weight = 20)
     )
+    players.add(AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = multi1))
 
-//    val p1 = AlphabetaPlayer(depth = 7, color = Color.White, evaluator = multi)
-//    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = KeepCloseEvaluator)
-    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = multi)
 
-    game.play(p1, p2)
+    val multi2 = MultiEvaluator(
+            PiecesCountEvaluator(regularWeight = 10, kingWeight = 20),
+            TrappedKingsEvaluator(weight = -20),
+            EaterEvaluator(weight = 40)
+    )
+//    players.add(AlphabetaPlayer(depth = 5, color = Color.Black, evaluator = multi2))
+
+    game.play(*players.toTypedArray())
 }

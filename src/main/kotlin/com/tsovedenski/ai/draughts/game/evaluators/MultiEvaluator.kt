@@ -9,12 +9,6 @@ import com.tsovedenski.ai.draughts.game.elements.Color
 class MultiEvaluator (vararg val evaluators: Evaluator): Evaluator {
 
     override fun evaluate(state: State, color: Color): Int {
-        val scores = mutableListOf<Int>()
-
-        evaluators.forEach { evaluator ->
-            scores.add(evaluator.evaluate(state, color))
-        }
-
-        return scores.sum()
+        return evaluators.map { it.evaluate(state, color) }.sum()
     }
 }
