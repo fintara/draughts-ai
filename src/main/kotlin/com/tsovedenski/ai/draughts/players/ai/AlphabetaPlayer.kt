@@ -3,10 +3,8 @@ package com.tsovedenski.ai.draughts.players.ai
 import com.tsovedenski.ai.draughts.game.State
 import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
-import com.tsovedenski.ai.draughts.game.elements.Piece
 import com.tsovedenski.ai.draughts.game.evaluators.Evaluator
-import com.tsovedenski.ai.draughts.game.evaluators.PiecesNumberEvaluator
-import com.tsovedenski.ai.draughts.players.ConsolePlayer
+import com.tsovedenski.ai.draughts.game.evaluators.PiecesCountEvaluator
 import org.slf4j.LoggerFactory
 
 /**
@@ -71,8 +69,8 @@ class AlphabetaPlayer (val depth: Int, color: Color, evaluator: Evaluator): Arti
     }
 
     private fun preevaluate(state: State, color: Color): Int {
-        val my = PiecesNumberEvaluator.evaluate(state, color)
-        val op = PiecesNumberEvaluator.evaluate(state, color.opposite())
+        val my = PiecesCountEvaluator.evaluate(state, color)
+        val op = PiecesCountEvaluator.evaluate(state, color.opposite())
 
         return my - op;
 //        val opponentLoses = state.pieces - state.count(color.opposite())

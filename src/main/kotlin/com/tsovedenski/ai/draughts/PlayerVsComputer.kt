@@ -18,15 +18,13 @@ fun main(args: Array<String>) {
     val p1 = ConsolePlayer("John", Color.White)
 
     val multi = MultiEvaluator(
-            PiecesNumberEvaluator,
-            MovesNumberEvaluator,
-            BlockedMovesEvaluator,
-            WeightedMatrixEvaluator
+            PiecesCountEvaluator(regularWeight = 1, kingWeight = 2),
+            TrappedKingsEvaluator(weight = 3)
     )
 
 //    val p1 = AlphabetaPlayer(depth = 7, color = Color.White, evaluator = multi)
 //    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = KeepCloseEvaluator)
-    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = PiecesNumberEvaluator)
+    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = multi)
 
     game.play(p1, p2)
 }
