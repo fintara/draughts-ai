@@ -1,6 +1,6 @@
 //package com.tsovedenski.ai.draughts.game.evaluators
 //
-//import com.tsovedenski.ai.draughts.game.State
+//import com.tsovedenski.ai.draughts.game.state.State
 //import com.tsovedenski.ai.draughts.game.elements.Color
 //
 ///**

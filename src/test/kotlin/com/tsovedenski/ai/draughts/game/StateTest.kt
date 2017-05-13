@@ -3,7 +3,7 @@ package com.tsovedenski.ai.draughts.game
 import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.game.elements.Point
-import com.tsovedenski.ai.draughts.players.Player
+import com.tsovedenski.ai.draughts.game.state.State
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test

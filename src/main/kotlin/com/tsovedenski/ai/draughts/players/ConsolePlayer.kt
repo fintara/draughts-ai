@@ -2,7 +2,7 @@ package com.tsovedenski.ai.draughts.players
 
 import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.game.elements.Point
-import com.tsovedenski.ai.draughts.game.State
+import com.tsovedenski.ai.draughts.game.state.State
 import com.tsovedenski.ai.draughts.game.elements.Color
 import org.slf4j.LoggerFactory
 import java.util.*

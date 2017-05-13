@@ -1,10 +1,9 @@
 package com.tsovedenski.ai.draughts.players.ai
 
-import com.tsovedenski.ai.draughts.game.State
+import com.tsovedenski.ai.draughts.game.state.State
 import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.evaluators.Evaluator
 import com.tsovedenski.ai.draughts.players.NamedPlayer
-import com.tsovedenski.ai.draughts.players.Player
 
 /**
  * Created by Tsvetan Ovedenski on 03/05/17.

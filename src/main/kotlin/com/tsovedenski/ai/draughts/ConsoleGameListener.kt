@@ -1,7 +1,7 @@
 package com.tsovedenski.ai.draughts
 
 import com.tsovedenski.ai.draughts.game.Game
-import com.tsovedenski.ai.draughts.game.State
+import com.tsovedenski.ai.draughts.game.state.State
 import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.players.Player
 
