@@ -20,12 +20,13 @@ fun main(args: Array<String>) {
     val multi = MultiEvaluator(
             PiecesNumberEvaluator,
             MovesNumberEvaluator,
-            BlockedMovesEvaluator
+            BlockedMovesEvaluator,
+            WeightedMatrixEvaluator
     )
 
-//    val p1 = AlphabetaPlayer(depth = 3, color = Color.White, evaluator = multi)
+//    val p1 = AlphabetaPlayer(depth = 7, color = Color.White, evaluator = multi)
 //    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = KeepCloseEvaluator)
-    val p2 = AlphabetaPlayer(depth = 3, color = Color.Black, evaluator = WeightedMatrixEvaluator)
+    val p2 = AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = PiecesNumberEvaluator)
 
     game.play(p1, p2)
 }
