@@ -37,10 +37,17 @@ class AlphabetaPlayer (val depth: Int, color: Color, evaluator: Evaluator): Arti
             return ScoreMovePair(score)
         }
 
+        var nextDepth = depth - 1
+
+//        if (states.size < state.size / 2 - 1) {
+////            log.warn("At depth $depth states are ${states.size} - increasing depth with 1")
+//            nextDepth++
+//        }
+
         if (color == this.color) {
             var currentAlpha = DEFAULT_SCORE_PAIR.copy(score = alpha)
             states.forEach { (child, move) ->
-                val result = alphabeta(child, color.opposite(), depth - 1, currentAlpha.score, beta)
+                val result = alphabeta(child, color.opposite(), nextDepth, currentAlpha.score, beta)
 
                 if (result.score > currentAlpha.score) {
                     currentAlpha = result.copy(move = move)
@@ -55,7 +62,7 @@ class AlphabetaPlayer (val depth: Int, color: Color, evaluator: Evaluator): Arti
 
         var currentBeta = DEFAULT_SCORE_PAIR.copy(score = beta)
         states.forEach { (child, move) ->
-            val result = alphabeta(child, color.opposite(), depth - 1, alpha, currentBeta.score)
+            val result = alphabeta(child, color.opposite(), nextDepth, alpha, currentBeta.score)
 
             if (result.score < currentBeta.score) {
                 currentBeta = result.copy(move = move)

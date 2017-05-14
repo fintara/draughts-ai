@@ -17,23 +17,36 @@ fun main(args: Array<String>) {
 
     val players = mutableListOf<Player>()
 
-    players.add(ConsolePlayer("John", Color.White))
+//    players.add(ConsolePlayer("John", Color.White))
 
-    val multi1 = MultiEvaluator(
+//    val multi1 = MultiEvaluator(
+//            PiecesCountEvaluator(regularWeight = 30, kingWeight = 40),
+//            TrappedKingsEvaluator(weight = -10),
+//            MovesNumberEvaluator(factor = 10),
+//            EaterEvaluator(weight = 20)
+//    )
+//    val multi1 = MultiEvaluator( // go1
+//            PiecesCountEvaluator(regularWeight = 9, kingWeight = 6),
+//            TrappedKingsEvaluator(weight = -7),
+//            MovesNumberEvaluator(factor = 3),
+//            EaterEvaluator(weight = 10)
+//    )
+    val multi1 = MultiEvaluator( // go2
+            PiecesCountEvaluator(regularWeight = 10, kingWeight = 6),
+            TrappedKingsEvaluator(weight = -4),
+            MovesNumberEvaluator(factor = 5),
+            EaterEvaluator(weight = 22)
+    )
+    players.add(AlphabetaPlayer(depth = 8, color = Color.Black, evaluator = multi1))
+
+
+    val multi2 = MultiEvaluator(
             PiecesCountEvaluator(regularWeight = 30, kingWeight = 40),
             TrappedKingsEvaluator(weight = -10),
             MovesNumberEvaluator(factor = 10),
             EaterEvaluator(weight = 20)
     )
-    players.add(AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = multi1))
-
-
-    val multi2 = MultiEvaluator(
-            PiecesCountEvaluator(regularWeight = 10, kingWeight = 20),
-            TrappedKingsEvaluator(weight = -20),
-            EaterEvaluator(weight = 40)
-    )
-//    players.add(AlphabetaPlayer(depth = 5, color = Color.Black, evaluator = multi2))
+    players.add(AlphabetaPlayer(depth = 8, color = Color.White, evaluator = multi2))
 
     game.play(*players.toTypedArray())
 }
