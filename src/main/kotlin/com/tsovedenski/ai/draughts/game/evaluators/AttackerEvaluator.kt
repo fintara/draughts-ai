@@ -6,8 +6,13 @@ import com.tsovedenski.ai.draughts.game.state.State
 /**
  * Created by Tsvetan Ovedenski on 13/05/17.
  */
-class EaterEvaluator (val weight: Int): Evaluator {
+class AttackerEvaluator(val weight: Int): Evaluator {
+
+    companion object {
+        val counter = PiecesCountEvaluator(regularWeight = 1, kingWeight = 2)
+    }
+
     override fun evaluate(state: State, color: Color): Int {
-        return -state.count(color.opposite()) * weight
+        return - counter.evaluate(state, color.opposite()) * weight
     }
 }

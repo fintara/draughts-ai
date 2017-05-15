@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
             PiecesCountEvaluator(regularWeight = 30, kingWeight = 40),
             TrappedKingsEvaluator(weight = -10),
             MovesNumberEvaluator(factor = 10),
-            EaterEvaluator(weight = 20)
+            AttackerEvaluator(weight = 20)
     )
     val simplePlayer = AlphabetaPlayer(depth = 5, color = Color.White, evaluator = multi1)
 
@@ -32,7 +32,7 @@ fun main(args: Array<String>) {
                 PiecesCountEvaluator(regularWeight = gene.genes[0], kingWeight = gene.genes[1]),
                 TrappedKingsEvaluator(weight = -gene.genes[2]),
                 MovesNumberEvaluator(factor = gene.genes[3]),
-                EaterEvaluator(weight = gene.genes[4])
+                AttackerEvaluator(weight = gene.genes[4])
         )
         val player = AlphabetaPlayer(depth = 5, color = Color.Black, evaluator = multi)
         population.add(Pair(gene, player))
@@ -100,7 +100,7 @@ fun crossover(a: Pair<Gene, Player>, b: Pair<Gene, Player>): Pair<Gene, Player> 
             PiecesCountEvaluator(regularWeight = genes[0], kingWeight = genes[1]),
             TrappedKingsEvaluator(weight = -genes[2]),
             MovesNumberEvaluator(factor = genes[3]),
-            EaterEvaluator(weight = genes[4])
+            AttackerEvaluator(weight = genes[4])
     )
     val player = AlphabetaPlayer(depth = 5, color = Color.Black, evaluator = multi)
     return Pair(Gene(genes), player)
