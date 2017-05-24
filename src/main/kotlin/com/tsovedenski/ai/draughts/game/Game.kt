@@ -14,6 +14,10 @@ interface Game {
         fun beforeStart()
         fun beforeMove(state: State, player: Player)
         fun afterMove(state: State, player: Player, move: Move)
+
+        /**
+         * Final state with possible winner (null if tie)
+         */
         fun afterFinish(state: State, winner: Player?)
     }
 }

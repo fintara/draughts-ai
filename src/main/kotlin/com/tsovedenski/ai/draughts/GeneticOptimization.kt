@@ -16,31 +16,32 @@ import java.util.*
 val r = Random()
 
 fun main(args: Array<String>) {
-    val popsize = 32
-    val population = mutableListOf<Pair<Gene, Player>>()
+    val popsize = 16
+    val population = mutableListOf<Gene>()
     val multi1 = MultiEvaluator(
             PiecesCountEvaluator(regularWeight = 30, kingWeight = 40),
             TrappedKingsEvaluator(weight = -10),
             MovesNumberEvaluator(factor = 10),
-            AttackerEvaluator(weight = 20)
+            AttackerEvaluator(weight = 20),
+            PathToKingEvaluator(weight = 25)
     )
+//    val multi1 = MultiEvaluator(
+//            PiecesCountEvaluator(regularWeight = 28, kingWeight = 28*2),
+//            TrappedKingsEvaluator(weight = -14),
+//            MovesNumberEvaluator(factor = 3),
+//            AttackerEvaluator(weight = 20),
+//            PathToKingEvaluator(weight = 8)
+//    )
     val simplePlayer = AlphabetaPlayer(depth = 5, color = Color.White, evaluator = multi1)
 
     for (i in 1..popsize) {
-        val gene = Gene(listOf(r.nextInt(30), r.nextInt(30), r.nextInt(30), r.nextInt(30), r.nextInt(30)))
-        val multi = MultiEvaluator(
-                PiecesCountEvaluator(regularWeight = gene.genes[0], kingWeight = gene.genes[1]),
-                TrappedKingsEvaluator(weight = -gene.genes[2]),
-                MovesNumberEvaluator(factor = gene.genes[3]),
-                AttackerEvaluator(weight = gene.genes[4])
-        )
-        val player = AlphabetaPlayer(depth = 5, color = Color.Black, evaluator = multi)
-        population.add(Pair(gene, player))
+          val gene = Gene(listOf(r.nextInt(30), r.nextInt(30), r.nextInt(30), r.nextInt(30), r.nextInt(30)))
+        population.add(gene)
     }
 
     for (i in 0..100) {
 
-        population.parallelStream().forEach { (gene, player) ->
+        population.parallelStream().forEach { gene ->
             print(".")
             var moveCounter = 0
             var gameWinner: Player? = null
@@ -61,6 +62,7 @@ fun main(args: Array<String>) {
 
             val game = Draughts().apply { listener = geneticListener }
 
+            val player = gene.player()
             game.play(simplePlayer, player)
 
             gene.fitness = (game.maxMoves - moveCounter) * when (gameWinner == player) {
@@ -70,13 +72,13 @@ fun main(args: Array<String>) {
         }
         println()
 
-        println("Fittest: ${population.maxBy { it.first.fitness }!!.first}")
+        println("Fittest: ${population.maxBy { it.fitness }!!}")
 
-        val newPopulation = mutableListOf<Pair<Gene, Player>>()
+        val newPopulation = mutableListOf<Gene>()
 
         for (j in 1..popsize) {
-            val parent1 = (1..4).map { population[r.nextInt(popsize)] }.maxBy { it.first.fitness }!!
-            val parent2 = (1..4).map { population[r.nextInt(popsize)] }.maxBy { it.first.fitness }!!
+            val parent1 = (1..4).map { population[r.nextInt(popsize)] }.maxBy { it.fitness }!!
+            val parent2 = (1..4).map { population[r.nextInt(popsize)] }.maxBy { it.fitness }!!
             val child = crossover(parent1, parent2)
             newPopulation.add(child)
         }
@@ -87,23 +89,34 @@ fun main(args: Array<String>) {
 
 }
 
-fun crossover(a: Pair<Gene, Player>, b: Pair<Gene, Player>): Pair<Gene, Player> {
+fun crossover(a: Gene, b: Gene): Gene {
     val genes = mutableListOf<Int>()
-    for (i in 0..a.first.genes.size-1) {
+    for (i in 0..a.genes.size-1) {
         if (r.nextDouble() < 0.5) {
-            genes.add(a.first.genes[i])
+            genes.add(a.genes[i])
         } else {
-            genes.add(b.first.genes[i])
+            genes.add(b.genes[i])
         }
     }
-    val multi = MultiEvaluator(
-            PiecesCountEvaluator(regularWeight = genes[0], kingWeight = genes[1]),
-            TrappedKingsEvaluator(weight = -genes[2]),
-            MovesNumberEvaluator(factor = genes[3]),
-            AttackerEvaluator(weight = genes[4])
-    )
-    val player = AlphabetaPlayer(depth = 5, color = Color.Black, evaluator = multi)
-    return Pair(Gene(genes), player)
+
+//    for (i in 0..genes.size-1) {
+//        if (r.nextDouble() < 0.5) {
+//            genes[i] = r.nextInt(30)
+//        }
+//    }
+
+    return Gene(genes)
 }
 
-data class Gene(val genes: List<Int>, var fitness: Int = 0)
+data class Gene(val genes: List<Int>, var fitness: Int = 0) {
+    fun player(): AlphabetaPlayer {
+        val multi = MultiEvaluator(
+                PiecesCountEvaluator(regularWeight = genes[0], kingWeight = 2*genes[0]),
+                TrappedKingsEvaluator(weight = -genes[1]),
+                MovesNumberEvaluator(factor = genes[2]),
+                AttackerEvaluator(weight = genes[3]),
+                PathToKingEvaluator(weight = genes[4])
+        )
+        return AlphabetaPlayer(depth = 5, color = Color.Black, evaluator = multi)
+    }
+}
