@@ -12,7 +12,7 @@ import com.tsovedenski.ai.draughts.game.state.State
 class PathToKingEvaluator(val weight: Int) : Evaluator {
 
     companion object {
-        private fun Double.ceil() = Math.ceil(this)
+        private fun Double.ceil() = Math.ceil(this).toInt()
     }
 
     override fun evaluate(state: State, color: Color): Int {
@@ -26,6 +26,6 @@ class PathToKingEvaluator(val weight: Int) : Evaluator {
                 .filter { state.moves(it).isNotEmpty() }
                 .map { it.row }
                 .map { Math.abs(goalRow - it) }
-                .average().ceil().toInt() * weight
+                .average().ceil() * weight
     }
 }

@@ -36,6 +36,7 @@ class AlphabetaPlayer(val depth: Int, color: Color, evaluator: Evaluator) : Arti
                 true -> 1
                 else -> -1
             }
+//            val score = evaluate(state, color.opposite()) - evaluate(state, color)
 
             return ScoreMovePair(score)
         }
@@ -72,8 +73,8 @@ class AlphabetaPlayer(val depth: Int, color: Color, evaluator: Evaluator) : Arti
     }
 
     private fun preevaluate(state: State, color: Color): Int {
-        val my = PiecesCountEvaluator().evaluate(state, color)
-        val op = PiecesCountEvaluator().evaluate(state, color.opposite())
+        val my = piecesEvaluator.evaluate(state, color)
+        val op = piecesEvaluator.evaluate(state, color.opposite())
 
         return my - op
     }
@@ -83,5 +84,6 @@ class AlphabetaPlayer(val depth: Int, color: Color, evaluator: Evaluator) : Arti
         private data class ScoreMovePair(val score: Int, val move: Move? = null)
         private data class StateMovePair(val state: State, val move: Move? = null)
         private val log = LoggerFactory.getLogger(AlphabetaPlayer::class.java)
+        private val piecesEvaluator = PiecesCountEvaluator()
     }
 }
