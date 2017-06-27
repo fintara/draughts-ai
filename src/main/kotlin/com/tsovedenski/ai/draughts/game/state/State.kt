@@ -5,17 +5,15 @@ import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.game.elements.Point
 import com.tsovedenski.ai.draughts.game.state.printers.FancyPrinter
-import com.tsovedenski.ai.draughts.game.state.printers.PlusMinusPrinter
 import com.tsovedenski.ai.draughts.game.state.printers.Printer
 import org.slf4j.LoggerFactory
 
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
+data class State(val board: LinkedHashMap<Point, Cell>, val size: Int, val pieces: Int, val forcedCapture: Boolean = false) {
 
-data class State (val board: LinkedHashMap<Point, Cell>, val size: Int, val pieces: Int, val forcedCapture: Boolean) {
-
-    constructor(size: Int, pieces: Int): this(generate(size, pieces), size, pieces, false)
+    constructor(size: Int, pieces: Int): this(generate(size, pieces), size, pieces)
     constructor(size: Int, pieces: Int, forcedCapture: Boolean): this(generate(size, pieces), size, pieces, forcedCapture)
 
     private val printer: Printer = FancyPrinter
@@ -113,17 +111,13 @@ data class State (val board: LinkedHashMap<Point, Cell>, val size: Int, val piec
      */
     fun moves(point: Point): List<Point> {
         log.trace("Generating moves for point $point")
-        val lists = mutableListOf<List<Point>>()
-
-        for (i in 1..size/2) {
-            lists.add(
-                listOf(
+        val lists = (1..size/2).map { i ->
+            listOf(
                     point + Point(i, i),
                     point + Point(i, -i),
                     point + Point(-i, -i),
                     point + Point(-i, i)
-                ).filter { valid(Move(from = point, to = it)) }
-            )
+            ).filter { valid(Move(from = point, to = it)) }
         }
 
         val possiblePoints = lists.flatten()
@@ -152,7 +146,7 @@ data class State (val board: LinkedHashMap<Point, Cell>, val size: Int, val piec
             moves.addAll(possibleMoves.map { Move(from = point, to = it) })
         }
 
-        if (forcedCapture && jumpCount == 1/* && moves.map { it.from.diagonal(it.to).size }.filter { it > 0 }.size == 1*/) {
+        if (forcedCapture && jumpCount == 1) {
             return listOf(
                     moves.sortedBy { -it.from.diagonal(it.to).size }.first()
             )

@@ -1,13 +1,16 @@
 package com.tsovedenski.ai.draughts.game.evaluators
 
-import com.tsovedenski.ai.draughts.game.state.State
 import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Point
+import com.tsovedenski.ai.draughts.game.state.State
 
 /**
  * Created by Tsvetan Ovedenski on 09/05/17.
+ *
+ * Each cell has some weight (inner have lower number than outer).
+ * Inspired from http://tim.hibal.org/blog/playing-checkers-with-minimax-continued/
  */
-class WeightedMatrixEvaluator (val factor: Int): Evaluator {
+class WeightedMatrixEvaluator(val factor: Int) : Evaluator {
 
     companion object {
         private val dict = mutableMapOf<Int, Map<Point, Int>>()
@@ -43,7 +46,7 @@ class WeightedMatrixEvaluator (val factor: Int): Evaluator {
             generate(state.size)
         }
 
-        val map = dict[state.size]!!
+        val map = dict[state.size] ?: return 0
 
         return state.points(color).map { map[it]!! * factor }.sum()
     }

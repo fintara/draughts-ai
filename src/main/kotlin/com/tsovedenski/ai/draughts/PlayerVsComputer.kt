@@ -3,7 +3,8 @@ package com.tsovedenski.ai.draughts
 import com.tsovedenski.ai.draughts.game.Draughts
 import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.evaluators.*
-import com.tsovedenski.ai.draughts.players.*
+import com.tsovedenski.ai.draughts.players.ConsolePlayer
+import com.tsovedenski.ai.draughts.players.Player
 import com.tsovedenski.ai.draughts.players.ai.AlphabetaPlayer
 
 /**
@@ -38,7 +39,7 @@ fun main(args: Array<String>) {
             AttackerEvaluator(weight = 20),
             PathToKingEvaluator(weight = 25)
     )
-    players.add(AlphabetaPlayer(depth = 8, color = Color.Black, evaluator = multi1))
+    players.add(AlphabetaPlayer(depth = 7, color = Color.Black, evaluator = multi1))
 
 
 //    val multi2 = MultiEvaluator(

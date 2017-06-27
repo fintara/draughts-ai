@@ -16,7 +16,7 @@ import java.util.*
 val r = Random()
 
 fun main(args: Array<String>) {
-    val popsize = 32
+    val popsize = 64
     val population = mutableListOf<Pair<Gene, Player>>()
     val multi1 = MultiEvaluator(
             PiecesCountEvaluator(regularWeight = 30, kingWeight = 40),
@@ -40,15 +40,14 @@ fun main(args: Array<String>) {
 
     for (i in 0..100) {
 
-        population.parallelStream().forEach { (gene, player) ->
+        population.parallelStream().forEach { (gene, currentPlayer) ->
             print(".")
             var moveCounter = 0
             var gameWinner: Player? = null
 
             val geneticListener = object: Game.ActionListener {
-                override fun beforeStart() {}
-
-                override fun beforeMove(state: State, player: Player) {}
+                override fun beforeStart() = Unit
+                override fun beforeMove(state: State, player: Player) = Unit
 
                 override fun afterMove(state: State, player: Player, move: Move) {
                     moveCounter++
@@ -61,10 +60,10 @@ fun main(args: Array<String>) {
 
             val game = Draughts().apply { listener = geneticListener }
 
-            game.play(simplePlayer, player)
+            game.play(simplePlayer, currentPlayer)
 
-            gene.fitness = (game.maxMoves - moveCounter) * when (gameWinner == player) {
-                true -> 1
+            gene.fitness = (game.maxMoves - moveCounter) * when (gameWinner) {
+                currentPlayer -> 1
                 else -> 0
             }
         }

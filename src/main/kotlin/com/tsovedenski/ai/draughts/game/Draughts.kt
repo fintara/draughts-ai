@@ -8,10 +8,7 @@ import org.slf4j.LoggerFactory
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
-class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean, val maxMoves: Int): Game {
-
-    constructor(): this(size = 8, pieces = 12, forcedCapture = true, maxMoves = 256)
-    constructor(forcedCapture: Boolean): this(size = 8, pieces = 12, forcedCapture = forcedCapture, maxMoves = 100)
+class Draughts(val size: Int = 8, val pieces: Int = 12, val forcedCapture: Boolean = true, val maxMoves: Int = 256) : Game {
 
     var listener: Game.ActionListener? = null
 
@@ -25,7 +22,7 @@ class Draughts (val size: Int, val pieces: Int, val forcedCapture: Boolean, val 
         if (players.size != 2) {
             throw IllegalArgumentException("Expected 2 players (got ${players.size})")
         } else if (players[0].color == players[1].color) {
-            throw IllegalArgumentException("Players cannot have same color")
+            throw IllegalArgumentException("Players cannot have the same color")
         }
 
         listener?.beforeStart()

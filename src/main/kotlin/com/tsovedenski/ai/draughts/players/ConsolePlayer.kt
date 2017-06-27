@@ -1,9 +1,9 @@
 package com.tsovedenski.ai.draughts.players
 
+import com.tsovedenski.ai.draughts.game.elements.Color
 import com.tsovedenski.ai.draughts.game.elements.Move
 import com.tsovedenski.ai.draughts.game.elements.Point
 import com.tsovedenski.ai.draughts.game.state.State
-import com.tsovedenski.ai.draughts.game.elements.Color
 import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.regex.Pattern
@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 /**
  * Created by Tsvetan Ovedenski on 30/04/2017.
  */
-class ConsolePlayer (name: String, color: Color): NamedPlayer(name, color) {
+class ConsolePlayer(name: String, color: Color) : NamedPlayer(name, color) {
 
     private val scanner = Scanner(System.`in`)
 
@@ -20,7 +20,7 @@ class ConsolePlayer (name: String, color: Color): NamedPlayer(name, color) {
 
         val moves = state.moves(color)
         println("Possible moves:")
-        moves.forEachIndexed { index, move -> println("${index+1} -> ${move.from} to ${move.to} <- ${index+1}") }
+        moves.forEachIndexed { index, (from, to) -> println("${index + 1} -> $from to $to <- ${index + 1}") }
 
         do {
             print("$this, Your move (# or row,col,row,col): ")

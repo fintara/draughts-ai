@@ -5,8 +5,11 @@ import com.tsovedenski.ai.draughts.game.state.State
 
 /**
  * Created by Tsvetan Ovedenski on 15/05/17.
+ *
+ * Naive distance of each piece until becoming a king.
+ * TODO: Should take into account opponent's pieces on the path.
  */
-class PathToKingEvaluator (val weight: Int): Evaluator {
+class PathToKingEvaluator(val weight: Int) : Evaluator {
 
     companion object {
         private fun Double.ceil() = Math.ceil(this)

@@ -1,12 +1,14 @@
 package com.tsovedenski.ai.draughts.game.evaluators
 
-import com.tsovedenski.ai.draughts.game.state.State
 import com.tsovedenski.ai.draughts.game.elements.Color
+import com.tsovedenski.ai.draughts.game.state.State
 
 /**
  * Created by Tsvetan Ovedenski on 09/05/17.
+ *
+ * Number of pieces that are blocked (no possible moves).
  */
-object BlockedMovesEvaluator: Evaluator {
+object BlockedMovesEvaluator : Evaluator {
 
     val weight = 2
 
